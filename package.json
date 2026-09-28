@@ -14,14 +14,12 @@
     "ingest:ltv": "node --env-file=.env.local scripts/ingest-focused-ltv.mjs",
     "ingest:fannie-matrices": "node --env-file=.env.local scripts/ingest-fannie-matrices.mjs"
   },
-  "devDependencies": {
-    "next": "^15.5.2",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1"
-  },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.4",
     "cheerio": "^1.1.2",
-    "openai": "^5.23.2"
+    "next": "^15.5.2",
+    "openai": "^5.23.2",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
   }
 }
