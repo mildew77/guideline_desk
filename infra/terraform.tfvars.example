@@ -1,0 +1,8 @@
+# Copy to terraform.tfvars (which is ignored by Git) and replace values.
+aws_region              = "us-east-1"
+repository_url          = "https://github.com/YOUR-ORG/YOUR-REPOSITORY"
+root_domain_name        = "marshall.mortgage"
+subdomain               = "guideline-desk"
+route53_hosted_zone_id  = "Z0123456789ABCDEF"
+supabase_url            = "https://YOUR-PROJECT.supabase.co"
+supabase_publishable_key = "sb_publishable_..."

@@ -4,12 +4,24 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
-    "build": "vite build && node scripts/obfuscate.mjs",
-    "preview": "vite preview --host 0.0.0.0"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "ingest:fannie": "node --env-file=.env.local scripts/ingest-guidelines.mjs",
+    "ingest:freddie": "node --env-file=.env.local scripts/ingest-freddie-guide.mjs",
+    "ingest:full-fannie": "node --env-file=.env.local scripts/ingest-full-fannie.mjs",
+    "ingest:full-freddie": "node --env-file=.env.local scripts/ingest-full-freddie.mjs",
+    "ingest:ltv": "node --env-file=.env.local scripts/ingest-focused-ltv.mjs",
+    "ingest:fannie-matrices": "node --env-file=.env.local scripts/ingest-fannie-matrices.mjs"
   },
   "devDependencies": {
-    "javascript-obfuscator": "^4.1.1",
-    "vite": "^7.1.7"
+    "next": "^15.5.2",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.4",
+    "cheerio": "^1.1.2",
+    "openai": "^5.23.2"
   }
 }

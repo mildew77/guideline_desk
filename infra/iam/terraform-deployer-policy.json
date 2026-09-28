@@ -1,0 +1,150 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ManageGuidelineDeskAmplify",
+      "Effect": "Allow",
+      "Action": [
+        "amplify:CreateApp",
+        "amplify:UpdateApp",
+        "amplify:DeleteApp",
+        "amplify:GetApp",
+        "amplify:ListApps",
+        "amplify:CreateBranch",
+        "amplify:UpdateBranch",
+        "amplify:DeleteBranch",
+        "amplify:GetBranch",
+        "amplify:ListBranches",
+        "amplify:CreateDomainAssociation",
+        "amplify:UpdateDomainAssociation",
+        "amplify:DeleteDomainAssociation",
+        "amplify:GetDomainAssociation",
+        "amplify:ListDomainAssociations",
+        "amplify:TagResource",
+        "amplify:UntagResource",
+        "amplify:ListTagsForResource"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "AllowAmplifyToReadTheGuidelineDeskCodeCommitRepository",
+      "Effect": "Allow",
+      "Action": [
+        "codecommit:GetRepository"
+      ],
+      "Resource": "arn:aws:codecommit:REGION:ACCOUNT_ID:guideline-desk"
+    },
+    {
+      "Sid": "ManageGuidelineDeskLambda",
+      "Effect": "Allow",
+      "Action": [
+        "lambda:CreateFunction",
+        "lambda:DeleteFunction",
+        "lambda:GetFunction",
+        "lambda:GetFunctionConfiguration",
+        "lambda:UpdateFunctionCode",
+        "lambda:UpdateFunctionConfiguration",
+        "lambda:AddPermission",
+        "lambda:RemovePermission",
+        "lambda:GetPolicy",
+        "lambda:ListVersionsByFunction",
+        "lambda:ListTags",
+        "lambda:TagResource",
+        "lambda:UntagResource"
+      ],
+      "Resource": "arn:aws:lambda:REGION:ACCOUNT_ID:function:guideline-desk-*"
+    },
+    {
+      "Sid": "ManageGuidelineDeskEventBridge",
+      "Effect": "Allow",
+      "Action": [
+        "events:PutRule",
+        "events:DeleteRule",
+        "events:DescribeRule",
+        "events:PutTargets",
+        "events:RemoveTargets",
+        "events:ListTargetsByRule",
+        "events:ListTagsForResource",
+        "events:TagResource",
+        "events:UntagResource"
+      ],
+      "Resource": "arn:aws:events:REGION:ACCOUNT_ID:rule/guideline-desk-*"
+    },
+    {
+      "Sid": "ManageGuidelineDeskRoles",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateRole",
+        "iam:DeleteRole",
+        "iam:GetRole",
+        "iam:GetRolePolicy",
+        "iam:ListRolePolicies",
+        "iam:ListAttachedRolePolicies",
+        "iam:ListRoleTags",
+        "iam:UpdateAssumeRolePolicy",
+        "iam:PutRolePolicy",
+        "iam:DeleteRolePolicy",
+        "iam:TagRole",
+        "iam:UntagRole"
+      ],
+      "Resource": "arn:aws:iam::ACCOUNT_ID:role/guideline-desk-*"
+    },
+    {
+      "Sid": "PassOnlyTheKeepaliveRoleToLambda",
+      "Effect": "Allow",
+      "Action": "iam:PassRole",
+      "Resource": "arn:aws:iam::ACCOUNT_ID:role/guideline-desk-*",
+      "Condition": {
+        "StringEquals": {
+          "iam:PassedToService": "lambda.amazonaws.com"
+        }
+      }
+    },
+    {
+      "Sid": "ManageGuidelineDeskLogs",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:DeleteLogGroup",
+        "logs:ListTagsForResource",
+        "logs:PutRetentionPolicy",
+        "logs:TagResource",
+        "logs:UntagResource"
+      ],
+      "Resource": "arn:aws:logs:REGION:ACCOUNT_ID:log-group:/aws/lambda/guideline-desk-*"
+    },
+    {
+      "Sid": "DiscoverCloudWatchLogGroups",
+      "Effect": "Allow",
+      "Action": "logs:DescribeLogGroups",
+      "Resource": "*"
+    },
+    {
+      "Sid": "ReadRoute53AndChangeOnlyTheSelectedZone",
+      "Effect": "Allow",
+      "Action": [
+        "route53:GetHostedZone",
+        "route53:ListHostedZones",
+        "route53:ListResourceRecordSets",
+        "route53:GetChange"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ManageDnsInTheSelectedHostedZone",
+      "Effect": "Allow",
+      "Action": "route53:ChangeResourceRecordSets",
+      "Resource": "arn:aws:route53:::hostedzone/HOSTED_ZONE_ID"
+    },
+    {
+      "Sid": "ManageAmplifyEnvironmentSecrets",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:PutParameter",
+        "ssm:GetParameter",
+        "ssm:DeleteParameter"
+      ],
+      "Resource": "arn:aws:ssm:REGION:ACCOUNT_ID:parameter/amplify/*"
+    }
+  ]
+}
