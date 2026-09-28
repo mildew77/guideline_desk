@@ -7,6 +7,8 @@ frontend:
     build:
       commands:
         - env | grep -e '^NEXT_PUBLIC_SUPABASE_URL=' >> .env.production
+        - printf 'OPENAI_API_KEY=%s\n' "$(aws ssm get-parameter --name "$OPENAI_API_KEY_PARAMETER_NAME" --with-decryption --query 'Parameter.Value' --output text)" >> .env.production
+        - printf 'SUPABASE_SECRET_KEY=%s\n' "$(aws ssm get-parameter --name "$SUPABASE_SECRET_KEY_PARAMETER_NAME" --with-decryption --query 'Parameter.Value' --output text)" >> .env.production
         - npm run build
   artifacts:
     baseDirectory: .next
