@@ -10,3 +10,5 @@ infra/*.tfstate
 infra/*.tfstate.*
 infra/*.tfvars
 !infra/terraform.tfvars.example
+temp.txt
+temp.php

@@ -11,16 +11,94 @@ resource "aws_amplify_app" "guideline_desk" {
   platform                    = "WEB_COMPUTE"
   repository                  = var.repository_url
   oauth_token                 = var.repository_oauth_token
+  iam_service_role_arn        = aws_iam_role.amplify_build.arn
   build_spec                  = file("${path.module}/../amplify.yml")
   enable_auto_branch_creation = false
 
   # The project URL is public configuration. Secret keys are added separately
   # as Amplify Parameter Store environment secrets after the app exists.
   environment_variables = {
-    NEXT_PUBLIC_SUPABASE_URL = var.supabase_url
+    NEXT_PUBLIC_SUPABASE_URL           = var.supabase_url
+    OPENAI_API_KEY_PARAMETER_NAME      = "/amplify/${var.amplify_app_id}/${var.production_branch}/OPENAI_API_KEY"
+    SUPABASE_SECRET_KEY_PARAMETER_NAME = "/amplify/${var.amplify_app_id}/${var.production_branch}/SUPABASE_SECRET_KEY"
   }
 
   tags = local.tags
+}
+
+# Amplify assumes this role when it clones the private CodeCommit repository.
+resource "aws_iam_role" "amplify_build" {
+  name = "${var.app_name}-amplify-build"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect    = "Allow"
+      Principal = { Service = "amplify.amazonaws.com" }
+      Action    = "sts:AssumeRole"
+    }]
+  })
+
+  tags = local.tags
+}
+
+resource "aws_iam_role_policy" "amplify_codecommit_read" {
+  name = "${var.app_name}-amplify-codecommit-read"
+  role = aws_iam_role.amplify_build.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "codecommit:GetRepository",
+        "codecommit:GetBranch",
+        "codecommit:GetCommit",
+        "codecommit:GetRepositoryTriggers",
+        "codecommit:GitPull"
+      ]
+      Resource = "arn:aws:codecommit:${var.aws_region}:${var.aws_account_id}:guideline_desk"
+    }]
+  })
+}
+
+# Required for Amplify Hosting to resolve this app's SecureString environment
+# secrets from Parameter Store during deployment and SSR initialization.
+resource "aws_iam_role_policy" "amplify_environment_secrets" {
+  name = "${var.app_name}-amplify-environment-secrets"
+  role = aws_iam_role.amplify_build.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "ssm:GetParameter",
+        "ssm:GetParameters"
+      ]
+      Resource = "arn:aws:ssm:${var.aws_region}:${var.aws_account_id}:parameter/amplify/${aws_amplify_app.guideline_desk.id}/${var.production_branch}/*"
+    }]
+  })
+}
+
+# Required when a customer-managed role is used with Amplify Hosting Compute.
+resource "aws_iam_role_policy" "amplify_compute_logs" {
+  name = "${var.app_name}-amplify-compute-logs"
+  role = aws_iam_role.amplify_build.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:DescribeLogGroups",
+        "logs:PutLogEvents"
+      ]
+      Resource = "*"
+    }]
+  })
 }
 
 resource "aws_amplify_branch" "production" {

@@ -4,6 +4,18 @@ variable "aws_region" {
   default     = "us-east-1"
 }
 
+variable "aws_account_id" {
+  description = "AWS account ID that owns the CodeCommit repository."
+  type        = string
+  default     = "577466147052"
+}
+
+variable "amplify_app_id" {
+  description = "Existing Amplify app ID, used to construct its Parameter Store secret paths."
+  type        = string
+  default     = "dlh7fmlfcfpp5"
+}
+
 variable "app_name" {
   description = "Name used for AWS resources."
   type        = string

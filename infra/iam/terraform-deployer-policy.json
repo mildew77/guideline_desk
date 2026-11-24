@@ -30,9 +30,11 @@
       "Sid": "AllowAmplifyToReadTheGuidelineDeskCodeCommitRepository",
       "Effect": "Allow",
       "Action": [
-        "codecommit:GetRepository"
+        "codecommit:GetRepository",
+        "codecommit:GitPull",
+        "codecommit:GitPush"
       ],
-      "Resource": "arn:aws:codecommit:REGION:ACCOUNT_ID:guideline-desk"
+      "Resource": "arn:aws:codecommit:REGION:ACCOUNT_ID:guideline_desk"
     },
     {
       "Sid": "ManageGuidelineDeskLambda",
@@ -97,6 +99,17 @@
       "Condition": {
         "StringEquals": {
           "iam:PassedToService": "lambda.amazonaws.com"
+        }
+      }
+    },
+    {
+      "Sid": "PassOnlyTheAmplifyBuildRoleToAmplify",
+      "Effect": "Allow",
+      "Action": "iam:PassRole",
+      "Resource": "arn:aws:iam::ACCOUNT_ID:role/guideline-desk-amplify-build",
+      "Condition": {
+        "StringEquals": {
+          "iam:PassedToService": "amplify.amazonaws.com"
         }
       }
     },
